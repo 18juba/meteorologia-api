@@ -1,0 +1,98 @@
+type: collection.insomnia.rest/5.0
+name: Meteorologia
+meta:
+  id: wrk_1c0a841fb165405d83cbf941c34a29a8
+  created: 1756514985191
+  modified: 1756514985191
+collection:
+  - name: Mapa
+    meta:
+      id: fld_795b61bfa31f48b696c9f0edebf139b8
+      created: 1756516591943
+      modified: 1756516593410
+      sortKey: -1756514989713
+    children:
+      - url: "{{ _.url }}/maps/search"
+        name: Busca
+        meta:
+          id: req_e2f07f911b4b43e096662ddf6c3ba91b
+          created: 1756516594888
+          modified: 1756517715631
+          isPrivate: false
+          sortKey: -1756516594888
+        method: GET
+        parameters:
+          - id: pair_ec822f26704c4f3eb2aba45758b62ab2
+            name: cep
+            value: 60020-061
+            disabled: false
+          - id: pair_7af3a1a0c6d9406b8c711361c2b211d0
+            name: amenity
+            disabled: false
+          - id: pair_0e55b74036e041558f0fa9fd7c49e4e4
+            name: country
+            disabled: false
+          - id: pair_1af748a091304091bd799f5be6a51b12
+            name: state
+            disabled: false
+          - id: pair_8ffc3d0fb2094dbbaefa6362f56bd1c6
+            name: city
+            disabled: false
+          - id: pair_476a036ff98a4b868ea373df58407bb9
+            name: street
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/maps/reverse_search"
+        name: Busca Reversa
+        meta:
+          id: req_97cd13e1cd674223b0be2096c244d7bb
+          created: 1756517003546
+          modified: 1756517736313
+          isPrivate: false
+          sortKey: -1756515792350.5
+        method: GET
+        parameters:
+          - id: pair_43b3df829e3f47e1999a6330dbf04fd5
+            name: latitude
+            value: "-3.746856"
+            disabled: false
+          - id: pair_25027604937b4e698c446cdf785e2a07
+            name: longitude
+            value: "-38.5382948"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_bebfd3eebb9d38066ce82a99946ea7fd52d953ae
+    created: 1756514985195
+    modified: 1756514985195
+environments:
+  name: Base Environment
+  meta:
+    id: env_bebfd3eebb9d38066ce82a99946ea7fd52d953ae
+    created: 1756514985193
+    modified: 1756515006322
+    isPrivate: false
+  data:
+    url: http://localhost:8000/api
