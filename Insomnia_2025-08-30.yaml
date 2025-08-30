@@ -81,6 +81,65 @@ collection:
             send: true
             store: true
           rebuildPath: true
+  - url: "{{ _.url }}/registro"
+    name: Registro
+    meta:
+      id: req_d355a99aa3374b40bb55b9d35c0abba3
+      created: 1756571048769
+      modified: 1756571109174
+      isPrivate: false
+      sortKey: -1756571048769
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"nome": "Lucas",
+        	"senha": "9999",
+        	"email": "lucas@gmail.com"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url }}/login"
+    name: Login
+    meta:
+      id: req_35b9f5dbac1d436e98103c7232ef2dbc
+      created: 1756571127957
+      modified: 1756571587290
+      isPrivate: false
+      sortKey: -1756543821828.5
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"email": "lucas@gmail.com",
+        	"senha": "9999"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
 cookieJar:
   name: Default Jar
   meta:
