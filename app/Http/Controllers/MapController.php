@@ -3,93 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use App\Interfaces\Address;
 use App\DTOs\AddressDto;
+use App\Traits\MapTrait;
 
 class MapController extends Controller
 {
-    const NOMINATIM_URL = "https://nominatim.openstreetmap.org";
-    const VIACEP_URL    = "https://viacep.com.br/ws";
+    use MapTrait;
 
-    protected function nominatim_search(Address $address): ?array
-    {
-        $params = array_filter([
-            'amenity' => $address->getAmenity(),
-            'street' => $address->getStreet(),
-            'city' => $address->getCity(),
-            'county' => $address->getCounty(),
-            'state' => $address->getState(),
-            'country' => $address->getCountry(),
-            'postalcode' => $address->getPostalCode(),
-            'format' => 'json',
-            'addressdetails' => 1,
-            'limit' => 1,
-        ]);
-
-        $userAgent = config('app.name', 'app_meteorologia');
-
-        if ($email = config('services.nominatim.email')) {
-            $params['email'] = $email;
-        }
-
-        $response = Http::withHeaders([
-            'User-Agent' => $userAgent,
-            'Accept-Language' => 'pt-BR'
-        ])->get(self::NOMINATIM_URL . '/search', $params);
-
-        if (! $response->ok()) {
-            return null;
-        }
-
-        $data = $response->json();
-        if (empty($data) || !is_array($data)) {
-            return null;
-        }
-
-        return $data[0] ?? null;
-    }
-
-    protected function cep_search(string $cep): ?AddressDto
-    {
-        $cleanCep = preg_replace('/\D+/', '', $cep);
-        if (strlen($cleanCep) !== 8) {
-            return null;
-        }
-
-        $resp = Http::get(self::VIACEP_URL . "/{$cleanCep}/json/");
-        if (! $resp->ok()) {
-            return null;
-        }
-
-        $json = $resp->json();
-
-        if (isset($json['erro']) && $json['erro'] === true) {
-            return null;
-        }
-
-        $address = AddressDto::fromViaCep($json);
-
-        $n = $this->nominatim_search($address);
-        if ($n) {
-            if (isset($n['lat'])) {
-                $address->setLatitude((float) $n['lat']);
-            }
-            if (isset($n['lon'])) {
-                $address->setLongitude((float) $n['lon']);
-            }
-            $address->setDisplayName($n['display_name'] ?? null);
-            if (isset($n['address']) && is_array($n['address'])) {
-                $addr = $n['address'];
-                $address->setCountry($addr['country'] ?? $address->getCountry());
-                $address->setCity($addr['city'] ?? $addr['town'] ?? $addr['village'] ?? $address->getCity());
-            }
-        }
-
-        return $address;
-    }
-
-    public function search(Request $request)
+    public function busca_por_nome(Request $request)
     {
         if ($request->filled('cep')) {
             $address = $this->cep_search($request->cep);
@@ -119,7 +40,7 @@ class MapController extends Controller
         $dto->setCountry($request->input('country'));
         $dto->setPostalCode($request->input('postalcode'));
 
-        $n = $this->nominatim_search($dto);
+        $n = $this->search($dto);
         if (! $n) {
             return response()->json([
                 'status' => [
@@ -142,12 +63,12 @@ class MapController extends Controller
         ], 200);
     }
 
-    public function reverse_search(Request $request)
+    public function busca_reversa(Request $request)
     {
-        $lat = $request->input('latitude');
-        $lon = $request->input('longitude');
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
 
-        if (! $lat || ! $lon) {
+        if (! $latitude || ! $longitude) {
             return response()->json([
                 'status' => [
                     'code'    => 400,
@@ -156,64 +77,33 @@ class MapController extends Controller
             ], 400);
         }
 
-        $params = [
-            'lat'            => $lat,
-            'lon'            => $lon,
-            'format'         => 'json',
-            'addressdetails' => 1,
-            'zoom'           => 18, // nível de detalhe (0=país, 18=edifício)
-        ];
+        $response = $this->reverse_search($latitude, $longitude);
 
-        $userAgent = config('app.name', 'app_meteorologia');
-
-        if ($email = config('services.nominatim.email')) {
-            $params['email'] = $email;
-        }
-
-        $response = Http::withHeaders([
-            'User-Agent'       => $userAgent,
-            'Accept-Language'  => 'pt-BR'
-        ])->get(self::NOMINATIM_URL . '/reverse', $params);
-
-        if (! $response->ok()) {
-            return response()->json([
-                'status' => [
-                    'code'    => 500,
-                    'message' => 'Erro ao consultar o serviço de geocodificação reversa'
-                ]
-            ], 500);
-        }
-
-        $data = $response->json();
-
-        if (empty($data) || !isset($data['address'])) {
+        if (!$response) {
             return response()->json([
                 'status' => [
                     'code'    => 404,
-                    'message' => 'Nenhuma localização encontrada'
+                    'message' => 'Localização não encontrada'
                 ]
             ], 404);
         }
 
-        $dto = new AddressDto();
-        $addr = $data['address'];
-
-        $dto->setLatitude((float)$lat);
-        $dto->setLongitude((float)$lon);
-        $dto->setDisplayName($data['display_name'] ?? null);
-        $dto->setCountry($addr['country'] ?? null);
-        $dto->setState($addr['state'] ?? null);
-        $dto->setCity($addr['city'] ?? $addr['town'] ?? $addr['village'] ?? null);
-        $dto->setCounty($addr['county'] ?? null);
-        $dto->setStreet(($addr['road'] ?? '') . ' ' . ($addr['house_number'] ?? ''));
-        $dto->setPostalCode($addr['postcode'] ?? null);
+        if (isset($response['error']) && $response['error']) {
+            return response()->json([
+                'status' => [
+                    'code'    => 500,
+                    'message' => 'Erro ao buscar geolocalização'
+                ],
+                'error' => $response['error']
+            ], 500);
+        }
 
         return response()->json([
             'status' => [
                 'code'    => 200,
-                'message' => 'Endereço encontrado com sucesso'
+                'message' => 'Localização encontrada com sucesso'
             ],
-            'localizacao' => $dto->toArray()
+            'localizacao' => $response
         ], 200);
     }
 }

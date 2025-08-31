@@ -3,27 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Traits\MapTrait;
 use App\Validations\UserValidation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+    use MapTrait;
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function registro(Request $request)
     {
-        if ($validate_errors = UserValidation::store($request))
-        {
+        if ($validate_errors = UserValidation::store($request)) {
             return $validate_errors;
         }
 
@@ -42,27 +34,52 @@ class UserController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function atualizar_endereco(Request $request)
     {
-        //
-    }
+        $latitude   = $request->input('latitude');
+        $longitude  = $request->input('longitude');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        if (! $latitude || ! $longitude) {
+            return response()->json([
+                'status' => [
+                    'code'    => 400,
+                    'message' => 'Latitude e longitude são obrigatórias'
+                ]
+            ], 400);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $response = $this->reverse_search($latitude, $longitude);
+
+        if (!$response) {
+            return response()->json([
+                'status' => [
+                    'code'    => 404,
+                    'message' => 'Localização não encontrada'
+                ]
+            ], 404);
+        }
+
+        if (isset($response['error']) && $response['error']) {
+            return response()->json([
+                'status' => [
+                    'code'    => 500,
+                    'message' => 'Erro ao buscar geolocalização'
+                ],
+                'error' => $response['error']
+            ], 500);
+        }
+
+        $user = User::where('id', Auth::id())->first();
+
+        $user->localizacao = $response;
+        $user->save();
+
+        return response()->json([
+            'status' => [
+                'code'      => 200,
+                'message'   => 'Localização atualizada com sucesso'
+            ],
+            'user' => $user
+        ]);
     }
 }
