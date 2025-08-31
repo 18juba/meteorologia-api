@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('senha');
 
+            $table->json('localizacao')->nullable();
+
             $table->boolean('ativo')->default(true);
             $table->timestamps();
         });
