@@ -9,22 +9,21 @@ collection:
     meta:
       id: fld_795b61bfa31f48b696c9f0edebf139b8
       created: 1756516591943
-      modified: 1756516593410
-      sortKey: -1756514989713
+      modified: 1756600378448
+      sortKey: -1756536613799.625
     children:
-      - url: "{{ _.url }}/maps/search"
+      - url: "{{ _.url }}/mapa/busca"
         name: Busca
         meta:
           id: req_e2f07f911b4b43e096662ddf6c3ba91b
           created: 1756516594888
-          modified: 1756517715631
+          modified: 1756597978798
           isPrivate: false
           sortKey: -1756516594888
         method: GET
         parameters:
           - id: pair_ec822f26704c4f3eb2aba45758b62ab2
             name: cep
-            value: 60020-061
             disabled: false
           - id: pair_7af3a1a0c6d9406b8c711361c2b211d0
             name: amenity
@@ -52,27 +51,95 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.url }}/maps/reverse_search"
+      - url: "{{ _.url }}/mapa/busca_reversa"
         name: Busca Reversa
         meta:
           id: req_97cd13e1cd674223b0be2096c244d7bb
           created: 1756517003546
-          modified: 1756517736313
+          modified: 1756599185404
           isPrivate: false
           sortKey: -1756515792350.5
         method: GET
         parameters:
           - id: pair_43b3df829e3f47e1999a6330dbf04fd5
             name: latitude
-            value: "-3.746856"
+            value: "-3.807209"
             disabled: false
           - id: pair_25027604937b4e698c446cdf785e2a07
             name: longitude
-            value: "-38.5382948"
+            value: "-38.522562"
             disabled: false
         headers:
           - name: User-Agent
             value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: User
+    meta:
+      id: fld_6c3e1a09971e44ba96838bd0d4df1c9d
+      created: 1756595830744
+      modified: 1756600412838
+      sortKey: -1756540217814.0625
+    children:
+      - url: "{{ _.url }}/users/atualizar_endereco"
+        name: Atualizar Endereço
+        meta:
+          id: req_6cfa374e985d4deabf114938dfcba16f
+          created: 1756595877475
+          modified: 1756603463816
+          isPrivate: false
+          sortKey: -1756595877475
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"latitude": "-30.029",
+            	"longitude": "-51.205"
+            }
+        parameters:
+          - id: pair_b4487343abf1433f91ec4bf38a1cb3da
+            disabled: false
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ _.token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/users/clima_atual"
+        name: Clima Atual
+        meta:
+          id: req_e6bdb82c3f084c93a1ea00f49e1c8175
+          created: 1756601592732
+          modified: 1756601782780
+          isPrivate: false
+          sortKey: -1756577255945.5
+        method: GET
+        parameters:
+          - id: pair_4746c14531ce456eac55c0a3c9d140f5
+            disabled: true
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ _.token }}"
         settings:
           renderRequestBody: true
           encodeUrl: true
@@ -151,7 +218,8 @@ environments:
   meta:
     id: env_bebfd3eebb9d38066ce82a99946ea7fd52d953ae
     created: 1756514985193
-    modified: 1756515006322
+    modified: 1756603644587
     isPrivate: false
   data:
     url: http://localhost:8000/api
+    token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzU2NjAzNjM2LCJleHAiOjE3NTY2MDcyMzYsIm5iZiI6MTc1NjYwMzYzNiwianRpIjoiRmFIVjJZa1JJZVVnWXROaCIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.TPgKjuksMQeRwE45GjM1UP_hAMwXK9u3nqoEFJDg20Q
