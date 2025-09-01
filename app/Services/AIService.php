@@ -35,14 +35,14 @@ class AIService
         $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
 
         $response = Prism::text()
-            ->using(Provider::Ollama, 'gemma3:1b')
+            ->using(Provider::OpenRouter, 'google/gemma-3-27b-it:free')
             ->withSystemPrompt(view('prompts.card-atividades'))
             ->withPrompt(
                 "DadosUsuario:\n```json\n{$userJson}\n```\n\n" .
                     "DadosClima:\n```json\n{$climaJson}\n```\n\n" .
                     "Instruções: gere apenas o fragmento HTML conforme o system prompt; use os hobbies do usuário apenas como base, o clima apenas de forma implícita; se não houver hobbies, apenas peça para o usuário ir no perfil e adicionar."
             )
-            ->usingTemperature(0.5)
+            ->usingTemperature(1)
             ->withMaxTokens(400)
             ->asText();
 
