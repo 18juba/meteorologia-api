@@ -38,16 +38,13 @@ class AuthController extends Controller
 
             $user = JWTAuth::setToken($token)->toUser();
 
-            $saudacoes = AIService::hello();
-
             return response()->json([
                 'status' => [
                     'code'      => 200,
                     'message'   => 'Autenticado com Sucesso'
                 ],
                 'token'     => $token,
-                'user'      => $user,
-                'saudacoes' => $saudacoes
+                'user'      => $user
             ], 200);
         } catch (JWTException $e) {
             return response()->json([

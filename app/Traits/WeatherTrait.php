@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 use App\Interfaces\Address;
 use App\DTOs\AddressDto;
 
-trait MapTrait
+trait WeatherTrait
 {
     const NOMINATIM_URL = "https://nominatim.openstreetmap.org";
     const VIACEP_URL    = "https://viacep.com.br/ws";
