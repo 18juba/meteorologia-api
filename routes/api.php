@@ -15,5 +15,7 @@ Route::get('/mapa/busca_reversa', [MapController::class, 'busca_reversa']);
 
 Route::middleware([AuthMiddleware::class])->group(function () {
     Route::patch('users/atualizar_endereco', [UserController::class, 'atualizar_endereco']);
+    Route::patch('users', [UserController::class, 'update']);
+
     Route::get('users/dashboard', [UserController::class, 'dashboard']);
 });

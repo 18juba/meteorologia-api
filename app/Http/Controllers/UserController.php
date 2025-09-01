@@ -7,6 +7,7 @@ use App\Services\AIService;
 use App\Services\WeatherService;
 use App\Traits\WeatherTrait;
 use App\Validations\UserValidation;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -38,7 +39,7 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $user = User::where('id', Auth::id());
+        $user = User::where('id', Auth::id())->first();
 
         $data = $request->validate([
             'hobbies'   => 'sometimes|string|max:5000',
@@ -108,9 +109,17 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        $clima = WeatherService::clima_atual($user);
+        try {
+            $clima = WeatherService::clima_atual($user);
+        } catch (Exception $e) {
+            $clima = [];
+        }
 
-        $atividades_recomendadas = AIService::recomendar_atividades($user, $clima);
+        try {
+            $atividades_recomendadas = AIService::recomendar_atividades($user, $clima);
+        } catch (Exception $e) {
+            $atividades_recomendadas = "<p>Os serviços de IA estão offline</p>";
+        }
 
         return response()->json([
             'status' => [

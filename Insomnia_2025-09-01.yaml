@@ -92,7 +92,7 @@ collection:
         meta:
           id: req_6cfa374e985d4deabf114938dfcba16f
           created: 1756595877475
-          modified: 1756603463816
+          modified: 1756758160568
           isPrivate: false
           sortKey: -1756595877475
         method: PATCH
@@ -100,8 +100,8 @@ collection:
           mimeType: application/json
           text: |-
             {
-            	"latitude": "-30.029",
-            	"longitude": "-51.205"
+            	"latitude": "-3.7300",
+            	"longitude": "-38.5229"
             }
         parameters:
           - id: pair_b4487343abf1433f91ec4bf38a1cb3da
@@ -122,12 +122,12 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: "{{ _.url }}/users/clima_atual"
-        name: Clima Atual
+      - url: "{{ _.url }}/users/dashboard"
+        name: Dashboard
         meta:
           id: req_e6bdb82c3f084c93a1ea00f49e1c8175
           created: 1756601592732
-          modified: 1756601782780
+          modified: 1756753035479
           isPrivate: false
           sortKey: -1756577255945.5
         method: GET
@@ -135,6 +135,40 @@ collection:
           - id: pair_4746c14531ce456eac55c0a3c9d140f5
             disabled: true
         headers:
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ _.token }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.url }}/users"
+        name: Update
+        meta:
+          id: req_737fe06006a545d59098b09ad04fe7ad
+          created: 1756757343070
+          modified: 1756757788288
+          isPrivate: false
+          sortKey: -1756574152357.25
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: >-
+            {
+            	"hobbies": "Gosto de futebol, e de programação, ir para a praia também é bom"
+            }
+        parameters:
+          - id: pair_4746c14531ce456eac55c0a3c9d140f5
+            disabled: true
+        headers:
+          - name: Content-Type
+            value: application/json
           - name: User-Agent
             value: insomnia/11.0.2
         authentication:
@@ -218,8 +252,8 @@ environments:
   meta:
     id: env_bebfd3eebb9d38066ce82a99946ea7fd52d953ae
     created: 1756514985193
-    modified: 1756603644587
+    modified: 1756757731820
     isPrivate: false
   data:
     url: http://localhost:8000/api
-    token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzU2NjAzNjM2LCJleHAiOjE3NTY2MDcyMzYsIm5iZiI6MTc1NjYwMzYzNiwianRpIjoiRmFIVjJZa1JJZVVnWXROaCIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.TPgKjuksMQeRwE45GjM1UP_hAMwXK9u3nqoEFJDg20Q
+    token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzU2NzU3NzI1LCJleHAiOjE3NTY3NjEzMjUsIm5iZiI6MTc1Njc1NzcyNSwianRpIjoiaXpZTDlRMlVreXRNRWJkaSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.H0AlriKSfWdRN35z3oVYHb5_awbeEn6xb4ndhnO2RMk
