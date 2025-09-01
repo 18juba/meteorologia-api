@@ -36,6 +36,25 @@ class UserController extends Controller
         ], 201);
     }
 
+    public function update(Request $request)
+    {
+        $user = User::where('id', Auth::id());
+
+        $data = $request->validate([
+            'hobbies'   => 'sometimes|string|max:5000',
+        ]);
+
+        $user->update($data);
+
+        return response()->json([
+            'status' => [
+                'code'      => 200,
+                'message'   => 'Perfil atualizado com sucesso'
+            ],
+            'user' => $user
+        ], 200);
+    }
+
     public function atualizar_endereco(Request $request)
     {
         $latitude   = $request->input('latitude');

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('senha');
 
             $table->json('localizacao')->nullable();
+            $table->text('hobbies')->nullable();
 
             $table->boolean('ativo')->default(true);
             $table->timestamps();
