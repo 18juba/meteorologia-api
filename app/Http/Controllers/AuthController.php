@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\AIService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -37,13 +38,16 @@ class AuthController extends Controller
 
             $user = JWTAuth::setToken($token)->toUser();
 
+            $saudacoes = AIService::hello();
+
             return response()->json([
                 'status' => [
                     'code'      => 200,
                     'message'   => 'Autenticado com Sucesso'
                 ],
-                'token' => $token,
-                'user'  => $user
+                'token'     => $token,
+                'user'      => $user,
+                'saudacoes' => $saudacoes
             ], 200);
         } catch (JWTException $e) {
             return response()->json([
