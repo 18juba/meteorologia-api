@@ -3,8 +3,6 @@ FROM php:8.2-cli-alpine
 # Instalar dependências essenciais
 RUN apk add --no-cache \
     mysql-client \
-    nodejs \
-    npm \
     && docker-php-ext-install pdo pdo_mysql
 
 # Instalar Composer
@@ -16,10 +14,8 @@ WORKDIR /var/www
 # Copiar arquivos da aplicação
 COPY . .
 
-# Instalar dependências PHP e Node
-RUN composer install --no-dev --optimize-autoloader \
-    && npm install \
-    && npm run build
+# Instalar dependências PHP
+RUN composer install --no-dev --optimize-autoloader
 
 # Configurar permissões
 RUN chmod -R 755 /var/www/storage
