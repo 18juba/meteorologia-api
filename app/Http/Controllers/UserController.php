@@ -10,6 +10,7 @@ use App\Validations\UserValidation;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -46,6 +47,9 @@ class UserController extends Controller
         ]);
 
         $user->update($data);
+
+        Cache::forget("clima_user_{$user->id}");
+        Cache::forget("atividades_user_{$user->id}");
 
         return response()->json([
             'status' => [
@@ -96,6 +100,9 @@ class UserController extends Controller
         $user->localizacao = $response;
         $user->save();
 
+        Cache::forget("clima_user_{$user->id}");
+        Cache::forget("atividades_user_{$user->id}");
+
         return response()->json([
             'status' => [
                 'code'      => 200,
@@ -109,25 +116,37 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        try {
-            $clima = WeatherService::clima_atual($user);
-        } catch (Exception $e) {
-            $clima = [];
-        }
+        $clima = Cache::remember(
+            "clima_user_{$user->id}",
+            now()->addMinute(),
+            function () use ($user) {
+                try {
+                    return WeatherService::clima_atual($user);
+                } catch (\Exception $e) {
+                    return [];
+                }
+            }
+        );
 
-        try {
-            $atividades_recomendadas = AIService::recomendar_atividades($user, $clima);
-        } catch (Exception $e) {
-            $atividades_recomendadas = "<p>Os serviços de IA estão offline</p>";
-        }
+        $atividades_recomendadas = Cache::remember(
+            "atividades_user_{$user->id}",
+            now()->addMinutes(30),
+            function () use ($user, $clima) {
+                try {
+                    return AIService::recomendar_atividades($user, $clima);
+                } catch (\Exception $e) {
+                    return "<p>Os serviços de IA estão offline</p>";
+                }
+            }
+        );
 
         return response()->json([
             'status' => [
-                'code'      => 200,
-                'message'   => 'Dashboard carregado com sucesso'
+                'code'    => 200,
+                'message' => 'Dashboard carregado com sucesso'
             ],
-            'clima'                     => $clima,
-            'atividades_recomendadas'   => $atividades_recomendadas
+            'clima'                   => $clima,
+            'atividades_recomendadas' => $atividades_recomendadas
         ]);
     }
 }
