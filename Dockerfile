@@ -25,6 +25,8 @@ EXPOSE 8011
 # Script de inicialização
 COPY <<EOF /start.sh
 #!/bin/sh
+php artisan config:clear
+php artisan cache:clear
 php artisan serve --host=0.0.0.0 --port=8011
 EOF
 
