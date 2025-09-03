@@ -22,4 +22,12 @@ RUN chmod -R 755 /var/www/storage
 
 EXPOSE 8011
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8011"]
+# Script de inicialização
+COPY <<EOF /start.sh
+#!/bin/sh
+php artisan serve --host=0.0.0.0 --port=8011
+EOF
+
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]

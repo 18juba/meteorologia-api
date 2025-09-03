@@ -10,6 +10,7 @@ services:
       - DB_DATABASE=meteorologia_api
       - DB_USERNAME=root
       - DB_PASSWORD=secret
+      - SESSION_DRIVER=array
     depends_on:
       - db
     volumes:
