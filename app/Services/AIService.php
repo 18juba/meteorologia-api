@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
 use Prism\Prism\Prism;
 use Prism\Prism\Enums\Provider;
 
@@ -35,14 +36,14 @@ class AIService
         $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
 
         $response = Prism::text()
-            ->using(Provider::OpenRouter, 'mistralai/mistral-nemo:free')
+            ->using(Provider::OpenRouter, 'deepseek/deepseek-chat-v3-0324:free')
             ->withSystemPrompt(view('prompts.card-atividades'))
             ->withPrompt(
                 "Aqui está os dados do usuário: {$userJson}\n" .
-                "Aqui estão os dados do clima: {$climaJson}"
+                    "Aqui estão os dados do clima: {$climaJson}"
             )
-            ->usingTemperature(1)
-            ->withMaxTokens(400)
+            ->usingTemperature(0.3)
+            ->withMaxTokens(600)
             ->asText();
 
         return $response->text;
@@ -73,14 +74,14 @@ class AIService
         $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
 
         $response = Prism::text()
-            ->using(Provider::OpenRouter, 'mistralai/mistral-nemo:free')
+            ->using(Provider::OpenRouter, 'deepseek/deepseek-chat-v3-0324:free')
             ->withSystemPrompt(view('prompts.cards-dashboard'))
             ->withPrompt("
                 Aqui estão os dados da localização: {$localizacaoJson}\n.\n
                 Aqui estão os dados do clima: {$climaJson}
             ")
-            ->usingTemperature(1)
-            ->withMaxTokens(400)
+            ->usingTemperature(0.4)
+            ->withMaxTokens(900)
             ->asText();
 
         $clean = preg_replace('/^```(json)?|```$/m', '', $response->text);
@@ -89,5 +90,25 @@ class AIService
         $json = json_decode($clean, true);
 
         return $json ?: ['raw' => $clean];
+    }
+
+    public static function rate_limit()
+    {
+        $apiKey = config('prism.providers.openrouter.api_key');
+        $url = config('prism.providers.openrouter.url') . '/key';
+
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer {$apiKey}",
+        ])->get($url);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return [
+            'error' => true,
+            'status' => $response->status(),
+            'message' => $response->body(),
+        ];
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AIController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AuthMiddleware;
@@ -11,6 +13,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/mapa/busca', [MapController::class, 'busca_por_nome']);
 Route::get('/mapa/busca_reversa', [MapController::class, 'busca_reversa']);
+
+Route::get('/rate_limit', [AIController::class, 'rate_limit']);
 
 
 Route::middleware([AuthMiddleware::class])->group(function () {
