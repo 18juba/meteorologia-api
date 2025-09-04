@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -50,6 +51,7 @@ class UserController extends Controller
 
         Cache::forget("clima_user_{$user->id}");
         Cache::forget("atividades_user_{$user->id}");
+        Cache::forget("cards_user_{$user->id}");
 
         return response()->json([
             'status' => [
@@ -102,6 +104,7 @@ class UserController extends Controller
 
         Cache::forget("clima_user_{$user->id}");
         Cache::forget("atividades_user_{$user->id}");
+        Cache::forget("cards_user_{$user->id}");
 
         return response()->json([
             'status' => [
@@ -135,7 +138,21 @@ class UserController extends Controller
                 try {
                     return AIService::recomendar_atividades($user, $clima);
                 } catch (\Exception $e) {
+                    Log::warning($e);
                     return "<p>Os serviços de IA estão offline</p>";
+                }
+            }
+        );
+
+        $cards_dashboard = Cache::remember(
+            "cards_user_{$user->id}",
+            now()->addMinutes(30),
+            function () use ($user, $clima) {
+                try {
+                    return AIService::cards_dashboard($user, $clima);
+                } catch (\Exception $e) {
+                    Log::warning($e);
+                    return [];
                 }
             }
         );
@@ -145,8 +162,11 @@ class UserController extends Controller
                 'code'    => 200,
                 'message' => 'Dashboard carregado com sucesso'
             ],
-            'clima'                   => $clima,
-            'atividades_recomendadas' => $atividades_recomendadas
+            'clima'         => $clima,
+            'cards' => [
+                'atividades_recomendadas'   => $atividades_recomendadas,
+                'outros_cards'              => $cards_dashboard
+            ]
         ]);
     }
 }

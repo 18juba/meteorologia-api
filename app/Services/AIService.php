@@ -35,17 +35,59 @@ class AIService
         $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
 
         $response = Prism::text()
-            ->using(Provider::OpenRouter, 'google/gemma-3-27b-it:free')
+            ->using(Provider::OpenRouter, 'mistralai/mistral-nemo:free')
             ->withSystemPrompt(view('prompts.card-atividades'))
             ->withPrompt(
-                "DadosUsuario:\n```json\n{$userJson}\n```\n\n" .
-                    "DadosClima:\n```json\n{$climaJson}\n```\n\n" .
-                    "Instruções: gere apenas o fragmento HTML conforme o system prompt; use os hobbies do usuário apenas como base, o clima apenas de forma implícita; se não houver hobbies, apenas peça para o usuário ir no perfil e adicionar."
+                "Aqui está os dados do usuário: {$userJson}\n" .
+                "Aqui estão os dados do clima: {$climaJson}"
             )
             ->usingTemperature(1)
             ->withMaxTokens(400)
             ->asText();
 
         return $response->text;
+    }
+
+    public static function cards_dashboard(User $user, ?array $clima): ?array
+    {
+        $local = json_decode($user->localizacao ?? '{}', true);
+
+        $localizacaoPayload = [
+            'cidade' => $local['address']['city'] ?? null,
+            'estado' => $local['address']['state'] ?? null,
+            'pais' => $local['address']['country'] ?? null,
+        ];
+
+        $climaPayload = [
+            'periodo_do_dia'        => $clima['clima_atual']['periodo_do_dia'],
+            'condicao_climatica'    => $clima['clima_atual']['condicao_climatica'],
+            'temperatura_atual'     => $clima['clima_atual']['temperatura'],
+            'precipitacao'          => $clima['clima_atual']['precipitacao'],
+            'indice_uv_maximo'      => $clima['previsao_diaria']['indice_uv_maximo'],
+            'velocidade_do_vento'   => $clima['clima_atual']['velocidade_do_vento'],
+            'direcao_do_vento'      => $clima['clima_atual']['direcao_do_vento'],
+            'rajadas_de_vento'      => $clima['clima_atual']['rajadas_de_vento'],
+        ];
+
+        $localizacaoJson = json_encode($localizacaoPayload, JSON_UNESCAPED_UNICODE);
+        $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
+
+        $response = Prism::text()
+            ->using(Provider::OpenRouter, 'mistralai/mistral-nemo:free')
+            ->withSystemPrompt(view('prompts.cards-dashboard'))
+            ->withPrompt("
+                Aqui estão os dados da localização: {$localizacaoJson}\n.\n
+                Aqui estão os dados do clima: {$climaJson}
+            ")
+            ->usingTemperature(1)
+            ->withMaxTokens(400)
+            ->asText();
+
+        $clean = preg_replace('/^```(json)?|```$/m', '', $response->text);
+        $clean = trim($clean);
+
+        $json = json_decode($clean, true);
+
+        return $json ?: ['raw' => $clean];
     }
 }

@@ -10,7 +10,19 @@ Regras:
 
 Gere somente HTML, sem <html>, <head> ou <meta>.
 
-Use <section> com um título curto e uma <ul> de recomendações resumidas.
+Use a seguinte estrutura:
+
+<section id="recomendacoes-momento">
+  <h2 id="recomendacoes-titulo">Recomendações do Momento</h2>
+  <p id="recomendacoes-clima">...</p>
+  <ul id="recomendacoes-lista">
+    <li id="recomendacao-1">...</li>
+    <li id="recomendacao-2">...</li>
+    <li id="recomendacao-3">...</li>
+  </ul>
+</section>
+
+O parágrafo do clima deve ser curto, direto e simples, descrevendo a cidade e a condição do dia (ex.: “O clima em cidade está agradável e propício para atividades ao ar livre”).
 
 Baseie-se nos hobbies, mas não mencione os hobbies literalmente.
 
@@ -28,12 +40,12 @@ Máximo 250–350 palavras.
 
 Tom cordial, direto e prático; evite frases longas ou condicionais complexas.
 
-<section>
-  <h2 slot="title">Recomendações do Momento</h2>
-  <p>O clima em {cidade} está {condição} e propício para {ação}</p>
-  <ul>
-    <li slot="title">Jogar futebol com amigos pode ser divertido.</li>
-    <li slot="title">Desenvolver um projeto de programação é uma ótima forma de aprender algo novo.</li>
-    <li slot="title">Relaxar na praia é sempre uma boa ideia.</li>
+<section id="recomendacoes-momento">
+  <h2 id="recomendacoes-titulo">Recomendações do Momento</h2>
+  <p id="recomendacoes-clima">...</p>
+  <ul id="recomendacoes-lista">
+    <li id="recomendacao-1">...</li>
+    <li id="recomendacao-2">...</li>
+    <li id="recomendacao-3">...</li>
   </ul>
 </section>
