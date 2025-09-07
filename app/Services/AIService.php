@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Prism\Prism\Prism;
 use Prism\Prism\Enums\Provider;
+use Prism\Prism\Schema\ObjectSchema;
+use Prism\Prism\Schema\StringSchema;
 
 class AIService
 {
@@ -36,7 +38,7 @@ class AIService
         $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
 
         $response = Prism::text()
-            ->using(Provider::OpenRouter, 'deepseek/deepseek-chat-v3-0324:free')
+            ->using(Provider::OpenRouter, 'google/gemma-3-4b-it:free')
             ->withSystemPrompt(view('prompts.card-atividades'))
             ->withPrompt(
                 "Aqui está os dados do usuário: {$userJson}\n" .
@@ -59,6 +61,55 @@ class AIService
             'pais' => $local['address']['country'] ?? null,
         ];
 
+        $schema = new ObjectSchema(
+            name: 'Análise de identificadores do clima',
+            description: 'Análise de cada indicador climático',
+            properties: [
+                new ObjectSchema(
+                    name: 'Temperatura',
+                    description: 'Análise da temperatura',
+                    properties: [
+                        new StringSchema('analise', 'Análise e resumo da temperatura atual')
+                    ],
+                    requiredFields: ['analise']
+                ),
+                new ObjectSchema(
+                    name: 'UV',
+                    description: 'Análise do índice UV',
+                    properties: [
+                        new StringSchema('analise', 'Análise e resumo da índice UV')
+                    ],
+                    requiredFields: ['analise']
+                ),
+                new ObjectSchema(
+                    name: 'Precipitação',
+                    description: 'Análise da precipitação',
+                    properties: [
+                        new StringSchema('analise', 'Análise e resumo da precipitação')
+                    ],
+                    requiredFields: ['analise']
+                ),
+                new ObjectSchema(
+                    name: 'Ventos',
+                    description: 'Análise dos Ventos',
+                    properties: [
+                        new StringSchema('analise', 'Análise e resumo dos Ventos')
+                    ],
+                    requiredFields: ['analise']
+                ),
+                new ObjectSchema(
+                    name: 'Umidade',
+                    description: 'Análise da umidade',
+                    properties: [
+                        new StringSchema('analise', 'Análise e resumo da umidade')
+                    ],
+                    requiredFields: ['analise']
+                ),
+                new StringSchema('condicao', 'A partir de todos os dados climáticos, deve retornar um desses indicadores entre: “very hot,” “very cold,” “very windy,” “very wet,” or “very uncomfortable”')
+            ],
+            requiredFields: ['Temperatura', 'UV', 'Precipitação', 'Ventos', 'Umidade', 'condicao']
+        );
+
         $climaPayload = [
             'periodo_do_dia'        => $clima['clima_atual']['periodo_do_dia'],
             'condicao_climatica'    => $clima['clima_atual']['condicao_climatica'],
@@ -73,16 +124,17 @@ class AIService
         $localizacaoJson = json_encode($localizacaoPayload, JSON_UNESCAPED_UNICODE);
         $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
 
-        $response = Prism::text()
+        $response = Prism::structured()
             ->using(Provider::OpenRouter, 'deepseek/deepseek-chat-v3-0324:free')
             ->withSystemPrompt(view('prompts.cards-dashboard'))
             ->withPrompt("
                 Aqui estão os dados da localização: {$localizacaoJson}\n.\n
                 Aqui estão os dados do clima: {$climaJson}
             ")
-            ->usingTemperature(0.4)
-            ->withMaxTokens(900)
-            ->asText();
+            ->withSchema($schema)
+            ->usingTemperature(0.25)
+            ->withMaxTokens(700)
+            ->asStructured();
 
         $clean = preg_replace('/^```(json)?|```$/m', '', $response->text);
         $clean = trim($clean);

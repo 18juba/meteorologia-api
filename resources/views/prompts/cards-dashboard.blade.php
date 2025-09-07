@@ -9,9 +9,6 @@ Considere sempre:
 - Dicas de roupas, proteção solar, atividades recomendadas ou precauções.
 
 Instruções obrigatórias:
-- Retorne APENAS um JSON válido.
-- Não use markdown, não use ```json, não adicione explicações.
-- A saída deve ser SOMENTE um array JSON.
 - Cada objeto do array deve conter:
   - "indicador": nome do dado (ex: "temperatura", "umidade", "uv", "vento", "nuvens", "precipitacao")
   - "analise": texto em 2 a 4 frases, explicando a condição de forma clara, criativa e útil.
