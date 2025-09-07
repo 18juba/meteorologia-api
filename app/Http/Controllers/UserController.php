@@ -131,31 +131,29 @@ class UserController extends Controller
             }
         );
 
-        $atividades_recomendadas = Cache::remember(
-            "atividades_user_{$user->id}",
-            now()->addMinutes(30),
-            function () use ($user, $clima) {
-                try {
-                    return AIService::recomendar_atividades($user, $clima);
-                } catch (\Exception $e) {
-                    Log::warning($e);
-                    return "<p>Os serviços de IA estão offline</p>";
-                }
-            }
-        );
+        $atividades_recomendadas = Cache::get("atividades_user_{$user->id}");
 
-        $cards_dashboard = Cache::remember(
-            "cards_user_{$user->id}",
-            now()->addMinutes(30),
-            function () use ($user, $clima) {
-                try {
-                    return AIService::cards_dashboard($user, $clima);
-                } catch (\Exception $e) {
-                    Log::warning($e);
-                    return [];
-                }
+        if (!$atividades_recomendadas) {
+            try {
+                $atividades_recomendadas = AIService::recomendar_atividades($user, $clima);
+                Cache::put("atividades_user_{$user->id}", $atividades_recomendadas, now()->addMinutes(30));
+            } catch (\Exception $e) {
+                Log::warning($e);
+                $atividades_recomendadas = "<p>Os serviços de IA estão offline</p>";
             }
-        );
+        }
+
+        $cards_dashboard = Cache::get("cards_user_{$user->id}");
+
+        if (!$cards_dashboard) {
+            try {
+                $cards_dashboard = AIService::cards_dashboard($user, $clima);
+                Cache::put("cards_user_{$user->id}", $cards_dashboard, now()->addMinutes(30));
+            } catch (\Exception $e) {
+                Log::warning($e);
+                $cards_dashboard = [];
+            }
+        }
 
         return response()->json([
             'status' => [
