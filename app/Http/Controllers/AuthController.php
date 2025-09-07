@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Services\AIService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -14,7 +13,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            $user = User::where('email', $request->email)->first();
+            $user = User::where('nome', $request->nome)->first();
 
             if (!$user || !(Hash::check($request->senha, $user->senha))) {
                 return response()->json([

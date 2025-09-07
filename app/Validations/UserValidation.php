@@ -17,10 +17,6 @@ class UserValidation extends Validation
             return self::response(400, 'É obrigatório enviar a senha');
         }
 
-        if (!$data->email) {
-            return self::response(400, 'É obrigatório enviar o email');
-        }
-
         if (User::where('email', $data->email)->exists())
         {
             return self::response(400, 'Já existe um usuário com esse email');
