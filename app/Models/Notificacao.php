@@ -17,6 +17,7 @@ class Notificacao extends Model
     ];
 
     protected $hidden = [
+        'user_id',
         'updated_at',
     ];
 }

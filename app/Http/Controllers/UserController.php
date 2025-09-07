@@ -177,9 +177,9 @@ class UserController extends Controller
 
     public function notificacoes()
     {
-        $notificacoes = Notificacao::where('user_id', Auth::id())->get();
-
-
+        $notificacoes = Notificacao::where('user_id', Auth::id())
+            ->where('lido', false)
+            ->get();
 
         return response()->json([
             'status' => [
@@ -188,5 +188,37 @@ class UserController extends Controller
             ],
             'notificacoes'  => $notificacoes
         ]);
+    }
+
+    public function marcar_como_lido(string $id)
+    {
+        $notificacao = Notificacao::find($id);
+
+        if (!$notificacao) {
+            return response()->json([
+                'status' => [
+                    'code'    => 404,
+                    'message' => 'Notificação não encontrada'
+                ],
+            ], 404);
+        }
+
+        $lido = NotificacaoService::ler($notificacao);
+
+        if (!$lido) {
+            return response()->json([
+                'status' => [
+                    'code'    => 500,
+                    'message' => 'Erro desconhecido ao ler notificação'
+                ],
+            ], 500);
+        }
+
+        return response()->json([
+            'status' => [
+                'code'    => 200,
+                'message' => 'Notificação lida com sucesso'
+            ],
+        ], 200);
     }
 }

@@ -5,88 +5,69 @@ meta:
   created: 1756514985191
   modified: 1756514985191
 collection:
-  - name: Mapa
-    meta:
-      id: fld_795b61bfa31f48b696c9f0edebf139b8
-      created: 1756516591943
-      modified: 1756600378448
-      sortKey: -1756536613799.625
-    children:
-      - url: "{{ _.url }}/mapa/busca"
-        name: Busca
-        meta:
-          id: req_e2f07f911b4b43e096662ddf6c3ba91b
-          created: 1756516594888
-          modified: 1756597978798
-          isPrivate: false
-          sortKey: -1756516594888
-        method: GET
-        parameters:
-          - id: pair_ec822f26704c4f3eb2aba45758b62ab2
-            name: cep
-            disabled: false
-          - id: pair_7af3a1a0c6d9406b8c711361c2b211d0
-            name: amenity
-            disabled: false
-          - id: pair_0e55b74036e041558f0fa9fd7c49e4e4
-            name: country
-            disabled: false
-          - id: pair_1af748a091304091bd799f5be6a51b12
-            name: state
-            disabled: false
-          - id: pair_8ffc3d0fb2094dbbaefa6362f56bd1c6
-            name: city
-            disabled: false
-          - id: pair_476a036ff98a4b868ea373df58407bb9
-            name: street
-            disabled: false
-        headers:
-          - name: User-Agent
-            value: insomnia/11.0.2
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
-      - url: "{{ _.url }}/mapa/busca_reversa"
-        name: Busca Reversa
-        meta:
-          id: req_97cd13e1cd674223b0be2096c244d7bb
-          created: 1756517003546
-          modified: 1756599185404
-          isPrivate: false
-          sortKey: -1756515792350.5
-        method: GET
-        parameters:
-          - id: pair_43b3df829e3f47e1999a6330dbf04fd5
-            name: latitude
-            value: "-3.807209"
-            disabled: false
-          - id: pair_25027604937b4e698c446cdf785e2a07
-            name: longitude
-            value: "-38.522562"
-            disabled: false
-        headers:
-          - name: User-Agent
-            value: insomnia/11.0.2
-        settings:
-          renderRequestBody: true
-          encodeUrl: true
-          followRedirects: global
-          cookies:
-            send: true
-            store: true
-          rebuildPath: true
   - name: User
     meta:
       id: fld_6c3e1a09971e44ba96838bd0d4df1c9d
       created: 1756595830744
-      modified: 1756600412838
+      modified: 1757267291082
       sortKey: -1756540217814.0625
     children:
+      - name: Notificações
+        meta:
+          id: fld_dc422e09552f43e5a12160a6d35a4ce5
+          created: 1757280366470
+          modified: 1757280368586
+          sortKey: -1757271005520
+        children:
+          - url: "{{ _.url }}/notificacoes"
+            name: index
+            meta:
+              id: req_3a1d95e045794d66a30b2db41d8b0464
+              created: 1757271005420
+              modified: 1757280458094
+              isPrivate: false
+              sortKey: -1757280392142
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ _.token }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.url }}/notificacoes/1"
+            name: Marcar como Lido
+            meta:
+              id: req_d5abef58da3d4684a025916f6a6ed68c
+              created: 1757280443590
+              modified: 1757280479376
+              isPrivate: false
+              sortKey: -1757280392042
+            method: PATCH
+            parameters:
+              - id: pair_b4487343abf1433f91ec4bf38a1cb3da
+                disabled: false
+            headers:
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ _.token }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
       - url: "{{ _.url }}/users/atualizar_endereco"
         name: Atualizar Endereço
         meta:
@@ -153,15 +134,15 @@ collection:
         meta:
           id: req_737fe06006a545d59098b09ad04fe7ad
           created: 1756757343070
-          modified: 1756757788288
+          modified: 1756925867798
           isPrivate: false
           sortKey: -1756574152357.25
         method: PATCH
         body:
           mimeType: application/json
-          text: >-
+          text: |-
             {
-            	"hobbies": "Gosto de futebol, e de programação, ir para a praia também é bom"
+            	"hobbies": "ir para a praia é bom"
             }
         parameters:
           - id: pair_4746c14531ce456eac55c0a3c9d140f5
@@ -187,7 +168,7 @@ collection:
     meta:
       id: req_d355a99aa3374b40bb55b9d35c0abba3
       created: 1756571048769
-      modified: 1756571109174
+      modified: 1757280779792
       isPrivate: false
       sortKey: -1756571048769
     method: POST
@@ -195,9 +176,8 @@ collection:
       mimeType: application/json
       text: |-
         {
-        	"nome": "Lucas",
-        	"senha": "9999",
-        	"email": "lucas@gmail.com"
+        	"nome": "lucas",
+        	"senha": "9999"
         }
     headers:
       - name: Content-Type
@@ -217,7 +197,7 @@ collection:
     meta:
       id: req_35b9f5dbac1d436e98103c7232ef2dbc
       created: 1756571127957
-      modified: 1756571587290
+      modified: 1757280782707
       isPrivate: false
       sortKey: -1756543821828.5
     method: POST
@@ -225,12 +205,32 @@ collection:
       mimeType: application/json
       text: |-
         {
-        	"email": "lucas@gmail.com",
+        	"nome": "lucas",
         	"senha": "9999"
         }
     headers:
       - name: Content-Type
         value: application/json
+      - name: User-Agent
+        value: insomnia/11.0.2
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: "{{ _.url }}/rate_limit"
+    name: Rate Limit
+    meta:
+      id: req_aa01fe59a282438d8471503bd42d0ba6
+      created: 1757008951994
+      modified: 1757008959887
+      isPrivate: false
+      sortKey: -1756542019821.2812
+    method: GET
+    headers:
       - name: User-Agent
         value: insomnia/11.0.2
     settings:
@@ -252,8 +252,8 @@ environments:
   meta:
     id: env_bebfd3eebb9d38066ce82a99946ea7fd52d953ae
     created: 1756514985193
-    modified: 1756757731820
+    modified: 1757280322220
     isPrivate: false
   data:
     url: http://localhost:8000/api
-    token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzU2NzU3NzI1LCJleHAiOjE3NTY3NjEzMjUsIm5iZiI6MTc1Njc1NzcyNSwianRpIjoiaXpZTDlRMlVreXRNRWJkaSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.H0AlriKSfWdRN35z3oVYHb5_awbeEn6xb4ndhnO2RMk
+    token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXBpL2xvZ2luIiwiaWF0IjoxNzU3MjgwMzEyLCJleHAiOjE3NTcyODM5MTIsIm5iZiI6MTc1NzI4MDMxMiwianRpIjoiQVlNQ2hhSGFybkhVTXU0cyIsInN1YiI6IjQiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.fi0XBQMG9CiLshcfpb3ZJV5Rs7Ya_xI1qxQKD2BhYsI
