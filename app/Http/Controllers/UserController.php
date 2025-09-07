@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notificacao;
 use App\Models\User;
 use App\Services\AIService;
+use App\Services\NotificacaoService;
 use App\Services\WeatherService;
 use App\Traits\WeatherTrait;
 use App\Validations\UserValidation;
@@ -28,6 +30,12 @@ class UserController extends Controller
             'nome'  => $request->nome,
             'senha' => Hash::make($request->senha),
         ]);
+
+        NotificacaoService::emitir(
+            $user->id,
+            'Nova Conta',
+            'Bem vindo ' . $user->nome .  ', ao app meteorologia da MP Solutions'
+        );
 
         return response()->json([
             'status' => [
@@ -164,6 +172,21 @@ class UserController extends Controller
                 'atividades_recomendadas'   => $atividades_recomendadas,
                 'outros_cards'              => $cards_dashboard
             ]
+        ]);
+    }
+
+    public function notificacoes()
+    {
+        $notificacoes = Notificacao::where('user_id', Auth::id())->get();
+
+
+
+        return response()->json([
+            'status' => [
+                'code'    => 200,
+                'message' => 'Notificações carregadas com sucesso'
+            ],
+            'notificacoes'  => $notificacoes
         ]);
     }
 }

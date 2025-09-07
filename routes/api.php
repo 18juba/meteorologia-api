@@ -22,4 +22,5 @@ Route::middleware([AuthMiddleware::class])->group(function () {
     Route::patch('users', [UserController::class, 'update']);
 
     Route::get('users/dashboard', [UserController::class, 'dashboard']);
+    Route::get('users/notificacoes', [UserController::class, 'notificacoes']);
 });

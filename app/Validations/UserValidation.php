@@ -13,13 +13,18 @@ class UserValidation extends Validation
             return self::response(400, 'É obrigatório enviar o nome');
         }
 
+        if (User::where('nome', $data->nome)->exists()) {
+            return self::response(400, 'Já existe um usuário com esse nome');
+        }
+
         if (!$data->senha) {
             return self::response(400, 'É obrigatório enviar a senha');
         }
 
-        if (User::where('email', $data->email)->exists())
-        {
-            return self::response(400, 'Já existe um usuário com esse email');
+        if ($data->email !== null) {
+            if (User::where('email', $data->email)->exists()) {
+                return self::response(400, 'Já existe um usuário com esse email');
+            }
         }
     }
 }
