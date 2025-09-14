@@ -38,7 +38,7 @@ class AIService
         $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
 
         $response = Prism::text()
-            ->using(Provider::OpenRouter, 'google/gemma-3-4b-it:free')
+            ->using(Provider::Gemini, 'gemini-2.5-flash-lite')
             ->withSystemPrompt(view('prompts.card-atividades'))
             ->withPrompt(
                 "Aqui está os dados do usuário: {$userJson}\n" .
@@ -125,7 +125,7 @@ class AIService
         $climaJson = json_encode($climaPayload, JSON_UNESCAPED_UNICODE);
 
         $response = Prism::structured()
-            ->using(Provider::OpenRouter, 'deepseek/deepseek-chat-v3-0324:free')
+            ->using(Provider::Gemini, 'gemini-2.5-flash-lite')
             ->withSystemPrompt(view('prompts.cards-dashboard'))
             ->withPrompt("
                 Aqui estão os dados da localização: {$localizacaoJson}\n.\n
